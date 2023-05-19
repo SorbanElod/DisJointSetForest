@@ -5,5 +5,8 @@ using namespace std;
 
 int main()
 {
-	DisJointSetForest<int> set();
+	node<int> n(5);
+	DisJointSetForest<int> set;
+	set.make_set(&n);
+	set.find_set(&n);
 }
