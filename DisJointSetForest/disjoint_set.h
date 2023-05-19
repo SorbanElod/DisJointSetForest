@@ -22,10 +22,11 @@ private:
 	unsigned long size;
 public:
 	DisJointSetForest();
+	DisJointSetForest(std::vector <node<TYPE>>& v);
 	~DisJointSetForest();
 	node<TYPE>* make_set(node<TYPE>* x);
-	node<TYPE>* make_set(node<TYPE> x);
-	node<TYPE>* make_set(TYPE x);
+	//node<TYPE>* make_set(node<TYPE> x);
+	//node<TYPE>* make_set(TYPE x);
 	node<TYPE>* union_set(node<TYPE>* x, node<TYPE>* y, bool by_rank = true, bool compress = true);
 	node<TYPE>* find_set(node<TYPE>* x, bool compress = true);
 	node<TYPE>* link(node<TYPE>* x, node<TYPE>* y, bool by_rank = true);

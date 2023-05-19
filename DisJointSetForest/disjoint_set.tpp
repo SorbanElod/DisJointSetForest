@@ -17,6 +17,15 @@ template <class TYPE>
 DisJointSetForest<TYPE>::DisJointSetForest() : size(0) {}
 
 template <class TYPE>
+DisJointSetForest<TYPE>::DisJointSetForest(vector <node<TYPE>>& v)
+{
+	for (int i = 0; i < v.size(); i++)
+	{
+		DisJointSetForest<TYPE>::make_set(&v[i]);
+	}
+}
+
+template <class TYPE>
 DisJointSetForest<TYPE>::~DisJointSetForest()
 {
 	// because all pointers are in a vector they are automagically destoyed at the end
@@ -29,19 +38,20 @@ node<TYPE>* DisJointSetForest<TYPE>::make_set(node<TYPE>* x)
 	x->parent = x;
 	x->rank = 0;
 	return x->parent;
+	size++;
 }
 
-template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::make_set(node<TYPE> x)
-{
-	return DisJointSetForest<TYPE>::make_set(&x);
-}
-
-template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::make_set(TYPE x)
-{
-	return DisJointSetForest<TYPE>::make_set(node<TYPE>::node(x));
-}
+//template <class TYPE>
+//node<TYPE>* DisJointSetForest<TYPE>::make_set(node<TYPE> x)
+//{
+//	return DisJointSetForest<TYPE>::make_set(&x);
+//}
+//
+//template <class TYPE>
+//node<TYPE>* DisJointSetForest<TYPE>::make_set(TYPE x)
+//{
+//	return DisJointSetForest<TYPE>::make_set(node<TYPE>::node(x));
+//}
 
 template <class TYPE>
 node<TYPE>* DisJointSetForest<TYPE>::find_set(node<TYPE>* x, bool compress)
@@ -127,6 +137,7 @@ void DisJointSetForest<TYPE>::write_all()
 		}
 		cout << endl;
 	}
+	cout << endl;
 }
 
 
