@@ -10,6 +10,7 @@ struct node
 	TYPE data;
 	node* parent;
 	unsigned long rank;
+	node();
 	node(TYPE data);
 	node(TYPE data, node* parent);
 };
@@ -25,8 +26,8 @@ public:
 	DisJointSetForest(std::vector <node<TYPE>>& v);
 	~DisJointSetForest();
 	node<TYPE>* make_set(node<TYPE>* x);
-	//node<TYPE>* make_set(node<TYPE> x);
-	//node<TYPE>* make_set(TYPE x);
+	node<TYPE>* search(node<TYPE>* x);
+	node<TYPE>* search(node<TYPE> x);
 	node<TYPE>* union_set(node<TYPE>* x, node<TYPE>* y, bool by_rank = true, bool compress = true);
 	node<TYPE>* find_set(node<TYPE>* x, bool compress = true);
 	node<TYPE>* link(node<TYPE>* x, node<TYPE>* y, bool by_rank = true);
