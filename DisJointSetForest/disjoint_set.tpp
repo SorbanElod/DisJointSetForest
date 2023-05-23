@@ -3,6 +3,7 @@
 #define _DISJOINT_SET_TPP_
 
 #include "disjoint_set.h"
+#include <vector>
 #include <iostream>
 
 using namespace std;
@@ -17,35 +18,52 @@ template <class TYPE>
 node<TYPE>::node() : node(NULL, this) {}
 
 template <class TYPE>
-DisJointSetForest<TYPE>::DisJointSetForest() : size(0) {}
+DisjointSetForest<TYPE>::DisjointSetForest() : size(0), numberofsets(0) {}
 
 template <class TYPE>
-DisJointSetForest<TYPE>::DisJointSetForest(vector <node<TYPE>>& v)
+DisjointSetForest<TYPE>::DisjointSetForest(vector <node<TYPE>>& v, bool validate) : numberofsets(0)
 {
 	for (int i = 0; i < v.size(); i++)
 	{
-		DisJointSetForest<TYPE>::make_set(&v[i]);
+		make_set(&v[i], validate);
 	}
 }
 
 template <class TYPE>
-DisJointSetForest<TYPE>::~DisJointSetForest()
+unsigned long DisjointSetForest<TYPE>::num_set()
 {
-	// because all pointers are in a vector they are automagically destoyed at the end
+	return numberofsets;
 }
 
 template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::make_set(node<TYPE>* x)
+node<TYPE>* DisjointSetForest<TYPE>::make_set(node<TYPE>* x, bool validate)
 {
+	// this has LINEAR time complexity
+	if (validate)
+	{
+		node <TYPE>* ptr = search(x);
+		// item already in a set
+		if (ptr == nullptr)
+		{
+			elements.push_back(x);
+			x->parent = x;
+			x->rank = 0;
+			size++;
+			numberofsets++;
+		}
+		return ptr;
+	}
+	// this has constant time complexity
 	elements.push_back(x);
 	x->parent = x;
 	x->rank = 0;
-	return x->parent;
+	numberofsets++;
 	size++;
+	return x->parent;
 }
 
 template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::search(node<TYPE>* x)
+node<TYPE>* DisjointSetForest<TYPE>::search(node<TYPE>* x) const
 {
 	for (int i = 0; i < elements.size(); i++)
 	{
@@ -58,20 +76,20 @@ node<TYPE>* DisJointSetForest<TYPE>::search(node<TYPE>* x)
 }
 
 template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::search(node<TYPE> x)
+node<TYPE>* DisjointSetForest<TYPE>::search(node<TYPE> x) const
 {
 	for (int i = 0; i < elements.size(); i++)
 	{
-		if (*elements[i] == x)
+		if (elements[i]->data == x.data)
 		{
-			return &elements[i];
+			return elements[i];
 		}
 	}
 	return nullptr;
 }
 
 template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::find_set(node<TYPE>* x, bool compress)
+node<TYPE>* DisjointSetForest<TYPE>::find_set(node<TYPE>* x, bool compress)
 {
 	if (compress)
 	{
@@ -95,8 +113,12 @@ node<TYPE>* DisJointSetForest<TYPE>::find_set(node<TYPE>* x, bool compress)
 
 
 template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::link(node<TYPE>* x, node<TYPE>* y, bool by_rank)
+node<TYPE>* DisjointSetForest<TYPE>::link(node<TYPE>* x, node<TYPE>* y, bool by_rank)
 {
+	if (x != y)
+	{
+		numberofsets--;
+	}
 	if (by_rank)
 	{
 		if (x->rank > y->rank)
@@ -125,13 +147,13 @@ node<TYPE>* DisJointSetForest<TYPE>::link(node<TYPE>* x, node<TYPE>* y, bool by_
 }
 
 template <class TYPE>
-node<TYPE>* DisJointSetForest<TYPE>::union_set(node<TYPE>* x, node<TYPE>* y, bool by_rank, bool compress)
+node<TYPE>* DisjointSetForest<TYPE>::union_set(node<TYPE>* x, node<TYPE>* y, bool by_rank, bool compress)
 {
-	return DisJointSetForest<TYPE>::link(find_set(x, compress), find_set(y, compress), by_rank);
+	return link(find_set(x, compress), find_set(y, compress), by_rank);
 }
 
 template <class TYPE>
-void DisJointSetForest<TYPE>::write_all()
+void DisjointSetForest<TYPE>::write_all() const
 {
 	for (int i = 0; i < elements.size(); i++)
 	{
@@ -145,6 +167,15 @@ void DisJointSetForest<TYPE>::write_all()
 		printf("\n");
 	}
 	cout << endl;
+}
+
+template <class TYPE>
+void DisjointSetForest<TYPE>::compress_all()
+{
+	for (int i = 0; i < elements.size(); i++)
+	{
+		find_set(elements[i]);
+	}
 }
 
 #endif

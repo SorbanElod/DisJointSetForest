@@ -16,22 +16,23 @@ struct node
 };
 
 template <class TYPE>
-class DisJointSetForest
+class DisjointSetForest
 {
 private:
 	std::vector <node <TYPE>*> elements;
-	unsigned long size;
+	unsigned long size, numberofsets;
+	node<TYPE>* link(node<TYPE>* x, node<TYPE>* y, bool by_rank = true);
 public:
-	DisJointSetForest();
-	DisJointSetForest(std::vector <node<TYPE>>& v);
-	~DisJointSetForest();
-	node<TYPE>* make_set(node<TYPE>* x);
-	node<TYPE>* search(node<TYPE>* x);
-	node<TYPE>* search(node<TYPE> x);
+	DisjointSetForest();
+	DisjointSetForest(std::vector <node<TYPE>>& v, bool validate = false);
+	node<TYPE>* make_set(node<TYPE>* x, bool validate = false);
+	node<TYPE>* search(node<TYPE>* x) const;
+	node<TYPE>* search(node<TYPE> x) const;
 	node<TYPE>* union_set(node<TYPE>* x, node<TYPE>* y, bool by_rank = true, bool compress = true);
 	node<TYPE>* find_set(node<TYPE>* x, bool compress = true);
-	node<TYPE>* link(node<TYPE>* x, node<TYPE>* y, bool by_rank = true);
-	void write_all();
+	unsigned long num_set();
+	void compress_all();
+	void write_all() const;
 };
 
 #include "disjoint_set.tpp"
