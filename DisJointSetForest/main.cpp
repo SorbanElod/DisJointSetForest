@@ -5,101 +5,79 @@
 
 using namespace std;
 
-struct el
+struct kapcsolat
 {
 	unsigned long kezdet = ULONG_MAX, veg = ULONG_MAX;
-	long suly = LONG_MAX;
+	unsigned long ido = LONG_MAX;
+	bool kritikus = false;
 	void kiir()
 	{
-		cout << kezdet << " -> " << veg << " = " << suly << "\n";
+		cout << kezdet << " -> " << veg << " = " << ido << "\n";
 	}
 };
 
-bool cmp(el a, el b)
+bool cmp(kapcsolat a, kapcsolat b)
 {
-	return(a.suly < b.suly);
+	return(a.ido < b.ido);
 }
 
-void beolvas(vector <el>& elek, int& n, int& m)
+void beolvas(vector <kapcsolat>& elek, unsigned long& n, unsigned long& m)
 {
 	ifstream fin("input.txt");
 	fin >> n >> m;
-	int cs1, cs2, suly;
+	unsigned long cs1, cs2, suly;
 	for (int i = 0; i < m; i++)
 	{
-		el tmp;
-		fin >> tmp.kezdet >> tmp.veg >> tmp.suly;
+		kapcsolat tmp;
+		fin >> tmp.kezdet >> tmp.veg >> tmp.ido;
 		elek.push_back(tmp);
 	}
 }
 
-
-template <class TYPE>
-vector<node<TYPE>> convert_to_nodes(vector<TYPE>& v)
+void halozat_optim(vector <kapcsolat>& elek, unsigned long n, unsigned long &krit)
 {
-	vector <node<TYPE>> res;
-	for (int i = 0; i < v.size(); i++)
+	DisjointSetForest<int> halmaz;
+	for (int i = 1; i <= n; i++)
 	{
-		res.push_back(node<TYPE>(v[i]));
+		halmaz.make_set(i);
 	}
-	return res;
-}
-
-void kruskal(vector <el>& elek, int n, vector <el>& ffa)
-{
-	vector <node<int>> csomok;
-	for (int i = 0; i < n; i++)
-	{
-		csomok.push_back(node<int>(i));
-	}
-	DisjointSetForest<int> halmaz(csomok);
-	int i = 0;
+	unsigned long i = 0;
 	while (halmaz.num_set() > 1)
 	{
-		if (halmaz.find_set(&csomok[elek[i].kezdet - 1]) != halmaz.find_set(&csomok[elek[i].veg - 1]))
+		if (halmaz.find_set(elek[i].kezdet) != halmaz.find_set(elek[i].veg))
 		{
-			ffa.push_back(elek[i]);
+			elek[i].kritikus = true;
+			krit++;
 		}
-		halmaz.union_set(&csomok[elek[i].kezdet - 1], &csomok[elek[i].veg - 1]);
+		halmaz.union_set(elek[i].kezdet, elek[i].veg);
 		i++;
 	}
 }
 
 int main()
 {
-	//int n = 8;
-	//vector <node<int>> v(n);
-	//node<int> no(100);
-	//for (int i = 0; i < v.size(); i++)
-	//{
-	//	v[i] = node<int>(i);
-	//}
-	//DisjointSetForest<int> forest(v);
-	//unsigned long sets = forest.num_set();
-	//forest.write_all();
-	//for (int i = 1; i < n; i++)
-	//{
-	//	forest.union_set(&v[0], &v[i]);
-	//	sets = forest.num_set();
-	//	forest.write_all();
-	//}
-	////forest.compress_all();
-	//forest.write_all();
 	ofstream fout("output.txt");
-	vector <el> ffa;
-	vector <el> elek;
-	int n, m;
+	vector <kapcsolat> elek;
+	unsigned long n, m;
 	beolvas(elek, n, m);
+	unsigned long krit_kapcs = 0, felesleges_kapcs = 0;
 	sort(elek.begin(), elek.end(), cmp);
-	kruskal(elek, n, ffa);
-	long sum = 0;
-	for (int i = 0; i < ffa.size(); i++)
+	halozat_optim(elek, n,krit_kapcs);
+	felesleges_kapcs = m - krit_kapcs;
+	fout << "Kritikus utak szama: " << krit_kapcs << endl << "Kritikus utak: " << endl;
+	for (unsigned long i = 0; i < m; i++)
 	{
-		sum += ffa[i].suly;
+		if (elek[i].kritikus)
+		{
+			fout << elek[i].kezdet << " - " << elek[i].veg << " : " << elek[i].ido << endl;
+		}
 	}
-	fout << sum << endl;
-	for (int i = 0; i < ffa.size(); i++)
+	fout <<endl<< "Felesleges utak szama: " << felesleges_kapcs << endl << "Felesleges utak: " << endl;
+	for (unsigned long i = 0; i < m; i++)
 	{
-		fout << ffa[i].kezdet << ' ' << ffa[i].veg << endl;
+		if (!elek[i].kritikus)
+		{
+			fout << elek[i].kezdet << " - " << elek[i].veg << " : " << elek[i].ido << endl;
+		}
 	}
 }

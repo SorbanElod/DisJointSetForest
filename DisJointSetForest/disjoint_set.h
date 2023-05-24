@@ -3,36 +3,35 @@
 #define DISJOINT_SET_H
 
 #include <vector>
+#include <unordered_map>
 
 template <class TYPE>
 struct node
 {
-	TYPE data;
 	node* parent;
 	unsigned long rank;
 	node();
-	node(TYPE data);
-	node(TYPE data, node* parent);
 };
 
 template <class TYPE>
 class DisjointSetForest
 {
 private:
-	std::vector <node <TYPE>*> elements;
+	std::unordered_map <TYPE, node <TYPE>*> elements;
 	unsigned long size, numberofsets;
-	node<TYPE>* link(node<TYPE>* x, node<TYPE>* y, bool by_rank = true);
+	TYPE get_data(node<TYPE>* x);
+	node<TYPE>* link(node<TYPE >* x, node<TYPE >* y, bool by_rank = true);
+	void write_all();
 public:
 	DisjointSetForest();
-	DisjointSetForest(std::vector <node<TYPE>>& v, bool validate = false);
-	node<TYPE>* make_set(node<TYPE>* x, bool validate = false);
-	node<TYPE>* search(node<TYPE>* x) const;
-	node<TYPE>* search(node<TYPE> x) const;
-	node<TYPE>* union_set(node<TYPE>* x, node<TYPE>* y, bool by_rank = true, bool compress = true);
+	DisjointSetForest(std::vector <TYPE>& v, bool validate = false);
+	node<TYPE>* make_set(TYPE x, bool validate = false);
+	node<TYPE>* search(TYPE x);
+	node<TYPE>* find_set(TYPE x, bool compress = true);
 	node<TYPE>* find_set(node<TYPE>* x, bool compress = true);
+	node<TYPE>* union_set(TYPE x, TYPE y, bool by_rank = true, bool compress = true);
 	unsigned long num_set();
 	void compress_all();
-	void write_all() const;
 };
 
 #include "disjoint_set.tpp"
