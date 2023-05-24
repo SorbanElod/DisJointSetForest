@@ -23,7 +23,7 @@ bool cmp(kapcsolat a, kapcsolat b)
 
 void beolvas(vector <kapcsolat>& elek, unsigned long& n, unsigned long& m)
 {
-	ifstream fin("input.txt");
+	ifstream fin("input1.txt");
 	fin >> n >> m;
 	unsigned long cs1, cs2, suly;
 	for (int i = 0; i < m; i++)
@@ -34,7 +34,7 @@ void beolvas(vector <kapcsolat>& elek, unsigned long& n, unsigned long& m)
 	}
 }
 
-void halozat_optim(vector <kapcsolat>& elek, unsigned long n, unsigned long &krit)
+void halozat_optim(vector <kapcsolat>& elek, unsigned long n, unsigned long& krit)
 {
 	DisjointSetForest<int> halmaz;
 	for (int i = 1; i <= n; i++)
@@ -62,7 +62,7 @@ int main()
 	beolvas(elek, n, m);
 	unsigned long krit_kapcs = 0, felesleges_kapcs = 0;
 	sort(elek.begin(), elek.end(), cmp);
-	halozat_optim(elek, n,krit_kapcs);
+	halozat_optim(elek, n, krit_kapcs);
 	felesleges_kapcs = m - krit_kapcs;
 	fout << "Kritikus utak szama: " << krit_kapcs << endl << "Kritikus utak: " << endl;
 	for (unsigned long i = 0; i < m; i++)
@@ -72,7 +72,7 @@ int main()
 			fout << elek[i].kezdet << " - " << elek[i].veg << " : " << elek[i].ido << endl;
 		}
 	}
-	fout <<endl<< "Felesleges utak szama: " << felesleges_kapcs << endl << "Felesleges utak: " << endl;
+	fout << endl << "Felesleges utak szama: " << felesleges_kapcs << endl << "Felesleges utak: " << endl;
 	for (unsigned long i = 0; i < m; i++)
 	{
 		if (!elek[i].kritikus)
